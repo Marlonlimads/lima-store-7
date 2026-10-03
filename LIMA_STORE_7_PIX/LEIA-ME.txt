@@ -1,0 +1,44 @@
+LIMA STORE 7 — PIX com confirmação automática (base de integração)
+
+REQUISITOS
+- Node.js 20+ recomendado
+- Conta Mercado Pago e aplicação criada em https://www.mercadopago.com.br/developers
+- Credenciais de teste para homologação e credenciais de produção para receber de verdade
+- Servidor com HTTPS e URL pública para receber Webhooks em produção
+
+INSTALAÇÃO LOCAL
+1. Extraia a pasta.
+2. Copie .env.example para .env.
+3. Preencha MP_ACCESS_TOKEN com o Access Token (comece pelas credenciais de teste).
+4. Execute: npm install
+5. Execute: npm start
+6. Abra http://localhost:3000
+
+CONFIGURAR WEBHOOK EM PRODUÇÃO
+1. Hospede a aplicação num servidor HTTPS persistente.
+2. Defina PUBLIC_BASE_URL com a URL pública do site, sem barra final.
+3. Configure a URL de notificação no painel de desenvolvedores do Mercado Pago para:
+   https://SEU-DOMINIO/api/webhooks/mercadopago
+4. Ative o evento de pagamentos e copie o segredo de assinatura para MP_WEBHOOK_SECRET.
+5. Reinicie o serviço depois de alterar as variáveis.
+6. Faça testes de ponta a ponta com credenciais e compradores de teste antes de trocar para produção.
+
+SEGURANÇA E LIMITES
+- O Access Token fica SOMENTE no servidor em .env; nunca coloque em HTML ou JavaScript público.
+- O backend só aceita os valores de baú fixos: R$30, R$50, R$200 e R$350.
+- A aprovação é confirmada consultando a API do Mercado Pago no servidor e comparando valor e referência do pedido.
+- Em produção, configure MP_WEBHOOK_SECRET; o servidor rejeita webhooks sem assinatura válida.
+- A base SQLite é adequada para um protótipo/instalação simples; para escala, configure armazenamento persistente e backups.
+- Esta integração não foi testada com suas credenciais reais. Confirme a documentação atual do Mercado Pago e faça testes antes de vender.
+- O PIX que o provedor gera é vinculado à conta/arranjo de recebimento do Mercado Pago. A chave de celular informada anteriormente não é, por si só, usada para gerar cobranças API.
+- O frontend pede nome e e-mail, necessários para criação do pagamento PIX.
+- Este projeto confirma pagamento, mas não entrega automaticamente produtos digitais. Adicione um fluxo de fulfillment após validar a entrega e as regras do que será vendido.
+
+DOCUMENTAÇÃO OFICIAL
+https://www.mercadopago.com.br/developers/pt/docs/checkout-api-payments/integration-configuration/integrate-pix
+https://www.mercadopago.com.br/developers/pt/docs/checkout-pro/payment-notifications
+
+
+CHAVE PIX INFORMADA PARA EXIBIÇÃO NO SITE
+a62aa62b-ef5c-4522-ae5c-1aa2b442aad4
+Ela aparece na vitrine e no checkout como referência. A cobrança PIX dinâmica da API do Mercado Pago é a cobrança usada para o fluxo de confirmação automática; valide com sua conta antes de receber pagamentos reais.
